@@ -1,0 +1,318 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/rschmukler/gulp-insert/"
+
+    >gulp-insert (v0.5.0)</a>
+</h1>
+<h4>Append or Prepend a string with gulp</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-insert">module gulp-insert</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-insert.append">
+            function <span class="apidocSignatureSpan">gulp-insert.</span>append
+            <span class="apidocSignatureSpan">(append)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-insert.prepend">
+            function <span class="apidocSignatureSpan">gulp-insert.</span>prepend
+            <span class="apidocSignatureSpan">(prepend)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-insert.transform">
+            function <span class="apidocSignatureSpan">gulp-insert.</span>transform
+            <span class="apidocSignatureSpan">(fn)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-insert.wrap">
+            function <span class="apidocSignatureSpan">gulp-insert.</span>wrap
+            <span class="apidocSignatureSpan">(begin, end)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-insert" id="apidoc.module.gulp-insert">module gulp-insert</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-insert.append" id="apidoc.element.gulp-insert.append">
+        function <span class="apidocSignatureSpan">gulp-insert.</span>append
+        <span class="apidocSignatureSpan">(append)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">append = function (append) {
+  var stream = new Stream.Transform({objectMode: true});
+
+  stream._transform = function(file, unused, cb) {
+    if(file.isNull()) {
+      return cb(null, file);
+    }
+    var appendedBuffer = new Buffer(getInsertString(append, file));
+    if(file.isStream()) {
+      file.contents = new StreamQueue(
+        file.contents,
+        getStreamFromBuffer(appendedBuffer)
+      );
+      return cb(null, file);
+    }
+    file.contents = Buffer.concat([file.contents, appendedBuffer],
+      appendedBuffer.length + file.contents.length);
+    cb(null, file);
+  };
+
+  return stream;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```
+
+## Append
+
+Appends a string onto the contents.
+
+```js
+.pipe(insert.<span class="apidocCodeKeywordSpan">append</span>(&#x27;world&#x27;)); // Appends &#x27;world&#x27; to the contents
+ of every file
+```
+
+## Prepend
+
+Prepends a string onto the contents.
+
+```js
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-insert.prepend" id="apidoc.element.gulp-insert.prepend">
+        function <span class="apidocSignatureSpan">gulp-insert.</span>prepend
+        <span class="apidocSignatureSpan">(prepend)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">prepend = function (prepend) {
+  var stream = new Stream.Transform({objectMode: true});
+
+  stream._transform = function(file, unused, cb) {
+    if(file.isNull()) {
+      return cb(null, file);
+    }
+    var prependedBuffer = new Buffer(getInsertString(prepend, file));
+    if(file.isStream()) {
+      file.contents = new StreamQueue(
+        getStreamFromBuffer(prependedBuffer),
+        file.contents
+      );
+      return cb(null, file);
+    }
+    file.contents = Buffer.concat([prependedBuffer, file.contents],
+      prependedBuffer.length + file.contents.length);
+    cb(null, file);
+  };
+
+  return stream;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```
+
+## Prepend
+
+Prepends a string onto the contents.
+
+```js
+.pipe(insert.<span class="apidocCodeKeywordSpan">prepend</span>(&#x27;Hello&#x27;)); // Prepends &#x27;Hello&#x27; to the contents
+ of every file
+```
+## Wrap
+
+Wraps the contents with two strings.
+
+```js
+.pipe(insert.wrap(&#x27;Hello&#x27;, &#x27;World&#x27;)); // prepends &#x27;hello&#x27; and appends &#x27;world&#x27; to the contents
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-insert.transform" id="apidoc.element.gulp-insert.transform">
+        function <span class="apidocSignatureSpan">gulp-insert.</span>transform
+        <span class="apidocSignatureSpan">(fn)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">transform = function (fn) {
+  var stream = new Stream.Transform({objectMode: true});
+
+  stream._transform = function(file, unused, cb) {
+    if(file.isNull()) {
+      return cb(null, file);
+    }
+    if(file.isStream()) {
+      file.contents = file.contents.pipe(new Stream.Transform());
+      file.contents._transform = function(chunk, encoding, cb) {
+        cb(null, new Buffer(fn(chunk.toString(), file)))
+      };
+      return cb(null, file);
+    }
+    file.contents = new Buffer(fn(file.contents.toString(), file));
+    cb(null, file);
+  };
+
+  return stream;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```
+
+## Transform
+
+Calls a function with the contents of the file.
+
+```js
+.pipe(insert.<span class="apidocCodeKeywordSpan">transform</span>(function(contents, file) {
+  return contents.toUpperCase();
+}));
+```
+
+Transform has access to the underlying vinyl file. The following code adds a &#x27;//&#x27; comment with the full file name before
+ the actual content.
+
+```js
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-insert.wrap" id="apidoc.element.gulp-insert.wrap">
+        function <span class="apidocSignatureSpan">gulp-insert.</span>wrap
+        <span class="apidocSignatureSpan">(begin, end)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">wrap = function (begin, end) {
+  var stream = new Stream.Transform({objectMode: true});
+
+  stream._transform = function(file, unused, cb) {
+    if(file.isNull()) {
+      return cb(null, file);
+    }
+    var prependedBuffer = new Buffer(getInsertString(begin, file));
+    var appendedBuffer = new Buffer(getInsertString(end, file));
+    if(file.isStream()) {
+      file.contents = new StreamQueue(
+        getStreamFromBuffer(prependedBuffer),
+        file.contents,
+        getStreamFromBuffer(appendedBuffer)
+      );
+      return cb(null, file);
+    }
+    file.contents = Buffer.concat([prependedBuffer, file.contents, appendedBuffer],
+      appendedBuffer.length + file.contents.length + prependedBuffer.length);
+    cb(null, file);
+  };
+
+  return stream;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+.pipe(insert.prepend(&#x27;Hello&#x27;)); // Prepends &#x27;Hello&#x27; to the contents of every file
+```
+## Wrap
+
+Wraps the contents with two strings.
+
+```js
+.pipe(insert.<span class="apidocCodeKeywordSpan">wrap</span>(&#x27;Hello&#x27;, &#x27;World&#x27;)); // prepends &#x27;hello&#x27
+; and appends &#x27;world&#x27; to the contents
+```
+
+## Transform
+
+Calls a function with the contents of the file.
+
+```js
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
